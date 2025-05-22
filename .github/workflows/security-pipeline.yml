@@ -46,8 +46,10 @@ jobs:
       - name: Parse Snyk results and gate build
         run: |
           echo "Parsing Snyk output for High and Critical vulnerabilities..."
-          HIGH_CRITICAL_COUNT=$(jq '[.vulnerabilities[] | select(.severity == "high" or .severity == "critical")] | length' snyk-report.json)
-          MEDIUM_COUNT=$(jq '[.vulnerabilities[] | select(.severity == "medium")] | length' snyk-report.json)
+          # Count high and critical vulnerabilities (root is array)
+          HIGH_CRITICAL_COUNT=$(jq '[ .[] | select(.severity == "high" or .severity == "critical") ] | length' snyk-report.json)
+          # Count medium vulnerabilities
+          MEDIUM_COUNT=$(jq '[ .[] | select(.severity == "medium") ] | length' snyk-report.json)
 
           echo "🟠 Medium Vulnerabilities: $MEDIUM_COUNT"
           echo "🔴 High/Critical Vulnerabilities: $HIGH_CRITICAL_COUNT"
