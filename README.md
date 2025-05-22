@@ -1,63 +1,132 @@
-📌 java-snyk-gating-demo
-This project demonstrates how to integrate Snyk with GitHub Actions to automatically scan a vulnerable Java application and fail pull requests or builds when high or critical vulnerabilities are detected. It showcases shift-left security by enforcing security early in the CI/CD pipeline.
-🛠️ What This Project Includes
-Forked from Snyk Labs Java Goof
 
-GitHub Actions workflow defined in .github/workflows/security-pipeline.yml
+# 📌 java-snyk-gating-demo
 
-Automated Snyk scan with JSON output
+This project demonstrates how to integrate [Snyk](https://snyk.io/) with GitHub Actions to automatically scan a vulnerable Java application and **fail builds or pull requests** if **high or critical vulnerabilities** are detected.
 
-Gating logic using jq to:
+It showcases **DevSecOps best practices** by shifting security left in the CI/CD pipeline.
 
-Show medium vulnerabilities
+---
 
-Fail build/PR if high or critical vulnerabilities exist
+## 🛠️ Project Features
 
-⚙️ Tools & Technologies
-Java 17 (Temurin)
+- 🔧 CI pipeline with GitHub Actions
+- 🔍 Scans for vulnerabilities using [Snyk CLI](https://docs.snyk.io/snyk-cli)
+- 📄 JSON output parsed with `jq`
+- ❌ Conditional gating: build fails on high/critical vulns
+- ⚠️ Medium vulns shown, but don’t fail the build
 
-Maven
+---
 
-GitHub Actions
+## 🧰 Tech Stack
 
-Snyk CLI
+- Java 17 (Temurin)
+- Maven
+- GitHub Actions
+- Snyk CLI
+- jq (lightweight JSON processor)
 
-jq (command-line JSON parser)
+---
 
-🚀 How It Works
-The workflow triggers on push or pull_request to the main branch.
+## 🚦 How It Works
 
-Code is scanned using Snyk CLI across all Maven projects.
+1. CI pipeline triggers on push or PR to `main`.
+2. Snyk scans all Maven projects (`--all-projects`).
+3. Outputs vulnerabilities to `snyk-report.json`.
+4. A script uses `jq` to:
+   - Count medium, high, and critical issues
+   - Fail the build if **any high/critical** issues are found
 
-Results are exported as JSON.
+### ✅ Example Output
 
-jq parses the report:
-
-If any high/critical vulns → build fails.
-
-Otherwise → build passes.
-Sample output:
-🟠 Medium Vulnerabilities: 3
+\`\`\`
+🟠 Medium Vulnerabilities: 2
 🔴 High/Critical Vulnerabilities: 1
 ::error ::Found 1 High or Critical vulnerabilities. Failing the build.
+\`\`\`
 
-Folder Structure:
+---
+
+## 📁 Project Structure
+
+\`\`\`
 .
-├── .github/
-│   └── workflows/
-│       └── security-pipeline.yml  # GitHub Actions pipeline
-├── todolist-goof/                 # Vulnerable Java modules
-├── log4shell-goof/               # Another vulnerable module
-├── pom.xml
-└── snyk-report.json              # Snyk scan output
+├── .github/workflows/security-pipeline.yml   # GitHub Actions workflow
+├── todolist-goof/                            # Vulnerable Java modules
+├── log4shell-goof/
+├── pom.xml                                   # Root Maven project file
+└── snyk-report.json                          # Output file after Snyk scan
+\`\`\`
 
-🧑‍💻 How to Reproduce Locally
-Fork this repo.
+---
 
-Add your Snyk Token to your GitHub repo secrets as SNYK_TOKEN.
+## 🚀 Getting Started
 
-Push a change or raise a PR to trigger the scan.
+### 1. Fork the repo
 
-View logs in GitHub Actions.
+### 2. Add your Snyk token
 
-Medium vulnerabilities are shown in logs for awareness.
+Go to **GitHub → Settings → Secrets and variables → Actions**  
+Add a new secret:
+
+\`\`\`
+Name: SNYK_TOKEN
+Value: <your-snyk-token>
+\`\`\`
+
+You can get this token from your Snyk account: https://app.snyk.io/account
+
+### 3. Trigger a scan
+
+- Commit and push a change to \`main\`, or
+- Open a pull request targeting \`main\`
+
+Check the **Actions tab** for results.
+
+---
+
+## ✍️ Rename the Repository
+
+You can rename your GitHub repo:
+
+1. Click the **Settings** tab of your repo.
+2. Under **Repository name**, rename to:
+
+   \`\`\`
+   java-snyk-gating-demo
+   \`\`\`
+
+3. Click **Rename** to confirm.
+
+---
+
+## 💬 Why Use This?
+
+- ✅ Block insecure builds early
+- 🛡️ Practice real-world DevSecOps
+- 🔁 Easily extendable to other languages/tools
+- 🧠 Learn how to parse and gate on real SCA results
+
+---
+
+## 📎 Resources
+
+- [Snyk CLI Docs](https://docs.snyk.io/snyk-cli)
+- [GitHub Actions Docs](https://docs.github.com/en/actions)
+- [jq Manual](https://stedolan.github.io/jq/manual/)
+
+---
+
+## 📌 Next Steps
+
+- [ ] Add badges for CI status
+- [ ] Create a multi-stage scan + deploy pipeline
+- [ ] Integrate other Snyk features (e.g., license compliance)
+
+---
+
+## 🧑‍💻 Maintainer
+
+**Nova** – Application Security Specialist
+
+---
+EOF
