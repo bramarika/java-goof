@@ -22,14 +22,23 @@ jobs:
 
       - name: Install Dependencies
         run: mvn install -DskipTests
+      - name: Install Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '16'
 
-      - name: Run Snyk to check for vulnerabilities
-        uses: snyk/actions/maven@master
+      - name: Install Snyk CLI
+        run: npm install -g snyk
+
+      - name: Authenticate Snyk
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
-        with:
-          args: --all-projects --json > snyk-report.json
+        run: snyk auth $SNYK_TOKEN
 
+      - name: Run Snyk test and generate JSON report
+        run: snyk test --all-projects --json > snyk-report.json
+
+      
       - name: Install jq
         run: sudo apt-get update && sudo apt-get install -y jq
 
