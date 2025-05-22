@@ -41,7 +41,8 @@ jobs:
       
       - name: Install jq
         run: sudo apt-get update && sudo apt-get install -y jq
-
+      - name: Check JSON root type
+        run: jq 'type' snyk-report.json
       - name: Parse Snyk results and gate build
         run: |
           echo "Parsing Snyk output for High and Critical vulnerabilities..."
