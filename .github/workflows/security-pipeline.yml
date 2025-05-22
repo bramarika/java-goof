@@ -13,6 +13,12 @@ jobs:
     steps:
       - name: Checkout Code
         uses: actions/checkout@v3
+      - name: Show current directory and files (Debug Step)
+        run: |
+          pwd
+          ls -l
+          ls -l ./todolist-goof
+          ls -l ./log4shell-goof  
 
       - name: Set up Java
         uses: actions/setup-java@v3
