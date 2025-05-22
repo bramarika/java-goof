@@ -116,17 +116,3 @@ You can rename your GitHub repo:
 
 ---
 
-## 📌 Next Steps
-
-- [ ] Add badges for CI status
-- [ ] Create a multi-stage scan + deploy pipeline
-- [ ] Integrate other Snyk features (e.g., license compliance)
-
----
-
-## 🧑‍💻 Maintainer
-
-**Nova** – Application Security Specialist
-
----
-EOF
