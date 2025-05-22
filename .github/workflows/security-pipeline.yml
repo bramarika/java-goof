@@ -1,0 +1,50 @@
+name: Snyk Security Scan with Gating
+
+on:
+  pull_request:
+    branches: [ main ]
+  push:
+    branches: [ main ]
+
+jobs:
+  security-scan:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      - name: Set up Java
+        uses: actions/setup-java@v3
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
+      - name: Install Dependencies
+        run: mvn install -DskipTests
+
+      - name: Run Snyk to check for vulnerabilities
+        uses: snyk/actions/maven@master
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+        with:
+          args: --all-projects --json > snyk-report.json
+
+      - name: Install jq
+        run: sudo apt-get update && sudo apt-get install -y jq
+
+      - name: Parse Snyk results and gate build
+        run: |
+          echo "Parsing Snyk output for High and Critical vulnerabilities..."
+          HIGH_CRITICAL_COUNT=$(jq '[.vulnerabilities[] | select(.severity == "high" or .severity == "critical")] | length' snyk-report.json)
+          MEDIUM_COUNT=$(jq '[.vulnerabilities[] | select(.severity == "medium")] | length' snyk-report.json)
+
+          echo "🟠 Medium Vulnerabilities: $MEDIUM_COUNT"
+          echo "🔴 High/Critical Vulnerabilities: $HIGH_CRITICAL_COUNT"
+
+          if [ "$HIGH_CRITICAL_COUNT" -gt 0 ]; then
+            echo "::error ::Found $HIGH_CRITICAL_COUNT High or Critical vulnerabilities. Failing the build."
+            exit 1
+          else
+            echo "✅ No High/Critical vulnerabilities. Build passes."
+          fi
