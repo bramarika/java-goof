@@ -48,8 +48,8 @@ jobs:
           snyk test ./log4shell-goof --json > snyk-log4shell.json || true
 
           # Combine JSON reports into one file for parsing
-          jq -s '{ vulnerabilities: map(.vulnerabilities) | add }' snyk-todolist.json snyk-log4shell.json > snyk-report.json
-      
+          jq -s '{ vulnerabilities: map(.vulnerabilities // []) | add }' snyk-todolist.json snyk-log4shell.json > snyk-report.json
+
       - name: Install jq
         run: sudo apt-get update && sudo apt-get install -y jq
       - name: Check JSON root type
