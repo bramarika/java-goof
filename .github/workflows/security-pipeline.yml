@@ -36,7 +36,7 @@ jobs:
         run: snyk auth $SNYK_TOKEN
 
       - name: Run Snyk test and generate JSON report
-        run: snyk test --all-projects --json > snyk-report.json
+        run: snyk test --all-projects --json > snyk-report.json || true
 
       
       - name: Install jq
